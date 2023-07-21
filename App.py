@@ -1,13 +1,13 @@
 import customtkinter as ctk
 from tkinter import ttk
 from tkinter import *
-import time
 import tkinter as tk
 from fpdf import FPDF
 from tkinter import simpledialog
 from tkinter import messagebox
 from tkinter import filedialog
 import fitz
+
 #pip install customtkinter, fpdf, PyPDF2
 
 
@@ -65,6 +65,24 @@ import_textbox = ctk.CTkTextbox(frame, width=300, height=500, font=ctk.CTkFont(s
 import_textbox.pack(pady=10, fill="x", padx=100)
 importiere_test = ctk.CTkButton(frame, text="Importiere Test", command = show_progressbar) # binde die progressbar.start Methode an den Button
 importiere_test.pack(padx=100, fill="x", pady=(5, 20))
+
+def pdf_hochladenfunc():
+    file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
+    if file_path:
+        pdf_document = fitz.open(file_path)
+        text = ""
+        for page_num in range(pdf_document.page_count):
+            page = pdf_document[page_num]
+            text += page.get_text()
+        pdf_document.close()
+
+        import_textbox.delete("1.0", tk.END)  # Clear existing text
+        import_textbox.insert(tk.END, text)
+
+
+
+pdf_hochladen = ctk.CTkButton(frame, text="Lade PDF hoch", command = pdf_hochladenfunc) # binde die progressbar.start Methode an den Button
+pdf_hochladen.pack(padx=100)
 
 schulfach_frame = ctk.CTkFrame(frame)
 schulfach_frame.pack(padx=100, pady=(20, 5), fill="both")
@@ -282,8 +300,6 @@ def start_neuer_test():
     
 neuer_test = ctk.CTkButton(summary_frame, text="Neur Test", command = start_neuer_test)
 neuer_test.grid(row = 3, column = 0, sticky = SE)
-
-
 
 def open_pdf():
     file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
